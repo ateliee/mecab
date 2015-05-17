@@ -1,0 +1,27 @@
+{
+    "name": "ateliee/mecab",
+    "type": "library",
+    "description": "mecab reading for php",
+    "keywords": [],
+    "homepage": "https://github.com/ateliee/mecab",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ateliee",
+            "email": "info@ateliee.com",
+            "homepage": "http://ateliee.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "pear",
+            "url": "http://pear.php.net/"
+        }
+    ],
+    "require": {
+        "php": ">=5.0.0"
+    },
+    "autoload": {
+        "psr-4": { "meCab\\": "src" }
+    }
+}
