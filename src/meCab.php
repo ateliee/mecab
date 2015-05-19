@@ -15,7 +15,7 @@ class meCab{
 
     /**
      * @param $text
-     * @return null
+     * @return meCabWord[]|null
      * @throws Exception
      */
     public function analysis($text){
