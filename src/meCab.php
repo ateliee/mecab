@@ -7,10 +7,18 @@ namespace meCab;
  */
 class meCab{
     private $tmp_file;
+    private $dictionary;
 
     function __construct()
     {
         $this->tmp_file = tempnam(sys_get_temp_dir(),'mecab');
+    }
+
+    /**
+     * @param $dictionary
+     */
+    public function setDictionary($dictionary){
+        $this->dictionary = $dictionary;
     }
 
     /**
@@ -20,7 +28,11 @@ class meCab{
      */
     public function analysis($text){
         if(file_put_contents($this->tmp_file,$text)){
-            exec('mecab '.$this->tmp_file,$res);
+            $command = array('mecab');
+            if($this->dictionary){
+                $command[] = '-d '.$this->dictionary;
+            }
+            exec(implode(' ',$command).' '.$this->tmp_file,$res);
             if($res){
                 $words = array();
                 foreach($res as $k => $r){
