@@ -8,32 +8,41 @@ namespace meCab;
 class meCab{
     private $tmp_file;
     private $dictionary;
+    private $dictionary_dir;
 
     function __construct()
     {
         $this->tmp_file = tempnam(sys_get_temp_dir(),'mecab');
+        $this->dictionary_dir = $this->exec('echo `mecab-config --dicdir`',$res);
     }
 
     /**
      * @param $dictionary
      */
     public function setDictionary($dictionary){
+        $path = $this->dictionary_dir.$dictionary;
+        if(!file_exists($path)){
+            throw new \Exception(sprintf('Not Found dictionary In "%s"',$dictionary));
+        }
         $this->dictionary = $dictionary;
     }
 
     /**
      * @param $text
      * @return meCabWord[]|null
-     * @throws Exception
+     * @throws \Exception
      */
     public function analysis($text){
         if(file_put_contents($this->tmp_file,$text)){
             $command = array('mecab');
             if($this->dictionary){
-                $command[] = '-d '.$this->dictionary;
+                $command[] = '-d '.$this->dictionary_dir.$this->dictionary;
             }
-            exec(implode(' ',$command).' '.$this->tmp_file,$res);
-            if($res){
+            $this->exec(implode(' ',$command).' '.$this->tmp_file,$res);
+            if($res && (count($res) > 0)){
+                if(preg_match('/ /',$res[0])){
+                    throw new \Exception($res[0]);
+                }
                 $words = array();
                 foreach($res as $k => $r){
                     if($r == 'EOS' && count($res) >= ($k + 1)){
@@ -42,11 +51,23 @@ class meCab{
                     $words[] = new meCabWord($r);
                 }
                 return $words;
+            }else{
+                throw new \Exception(sprintf('Error text analysis.'));
             }
         }else{
-            throw new Exception(sprintf('error write tmp file in %s',$this->tmp_file));
+            throw new \Exception(sprintf('Error write tmp file in %s',$this->tmp_file));
         }
-        return null;
+    }
+
+    /**
+     * @param $command
+     * @param $res
+     * @return string
+     */
+    private function exec($command,&$res){
+        if($text = exec($command,$res)){
+        }
+        return $text;
     }
 }
 
