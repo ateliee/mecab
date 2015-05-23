@@ -70,9 +70,6 @@ class meCab{
             }
             $this->exec(implode(' ',$command).' '.$this->tmp_file,$res);
             if($res && (count($res) > 0)){
-                if(preg_match('/ /u',$res[0])){
-                    throw new \Exception($res[0]);
-                }
                 $words = array();
                 foreach($res as $k => $r){
                     if($r == 'EOS' && count($res) >= ($k + 1)){
