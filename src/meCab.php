@@ -8,36 +8,49 @@ namespace meCab;
 class meCab{
     private $tmp_file;
     private $dictionary;
-    private $dictionary_dir;
+
+    static private $dictionary_dir;
+    static private $class_inited;
 
     function __construct()
     {
         $this->tmp_file = tempnam(sys_get_temp_dir(),'mecab');
-        $this->dictionary_dir = $this->exec('echo `mecab-config --dicdir`',$res);
+        if(!self::$class_inited){
+            self::autoDictionaryDir();
+        }
     }
 
     /**
      * @param string $dictionary_dir
      */
-    public function setDictionaryDir($dictionary_dir)
+    static public function setDictionaryDir($dictionary_dir)
     {
-        $this->dictionary_dir = $dictionary_dir;
+        self::$dictionary_dir = $dictionary_dir;
+        self::$class_inited = true;
     }
 
     /**
      * @return string
      */
-    public function getDictionaryDir()
+    static public function getDictionaryDir()
     {
-        return $this->dictionary_dir;
+        return self::$dictionary_dir;
     }
 
+    /**
+     * @return string
+     */
+    static public function autoDictionaryDir(){
+        self::$dictionary_dir = exec('echo `mecab-config --dicdir`',$res);
+        self::$class_inited = true;
+        return self::$dictionary_dir;
+    }
 
     /**
      * @param $dictionary
      */
     public function setDictionary($dictionary){
-        $path = $this->dictionary_dir.$dictionary;
+        $path = self::$dictionary_dir.$dictionary;
         if(!file_exists($path)){
             throw new \Exception(sprintf('Not Found dictionary In "%s"',$dictionary));
         }
@@ -53,7 +66,7 @@ class meCab{
         if(file_put_contents($this->tmp_file,$text)){
             $command = array('mecab');
             if($this->dictionary){
-                $command[] = '-d '.$this->dictionary_dir.$this->dictionary;
+                $command[] = '-d '.self::$dictionary_dir.$this->dictionary;
             }
             $this->exec(implode(' ',$command).' '.$this->tmp_file,$res);
             if($res && (count($res) > 0)){
