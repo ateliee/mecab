@@ -17,6 +17,23 @@ class meCab{
     }
 
     /**
+     * @param string $dictionary_dir
+     */
+    public function setDictionaryDir($dictionary_dir)
+    {
+        $this->dictionary_dir = $dictionary_dir;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDictionaryDir()
+    {
+        return $this->dictionary_dir;
+    }
+
+
+    /**
      * @param $dictionary
      */
     public function setDictionary($dictionary){
