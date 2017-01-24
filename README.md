@@ -10,7 +10,7 @@ https://github.com/neologd/mecab-ipadic-neologd
 
 ```
     "require": {
-        "ateliee/mekab": "dev-master"
+        "ateliee/mecab": "dev-master"
     }
 ```
 
